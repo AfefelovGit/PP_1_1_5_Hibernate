@@ -5,7 +5,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
 public class Util {
-
     private static final Configuration cfg = new Configuration();
     private static SessionFactory sessionFactory = null;
 
@@ -17,9 +16,10 @@ public class Util {
         return sessionFactory;
     }
 
-    public static void CloseSF () {
+    public static void closeSessionFactory() {
         if (sessionFactory != null) {
             sessionFactory.close();
+            sessionFactory = null;
         }
     }
 }
