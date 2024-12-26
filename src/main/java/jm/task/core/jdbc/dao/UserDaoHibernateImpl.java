@@ -29,12 +29,12 @@ public class UserDaoHibernateImpl implements UserDao {
 
     @Override
     public void createUsersTable() {
-        sqlCommand(CREAT_TABLE_SQL);
+        executeSQLQuery(CREAT_TABLE_SQL);
     }
 
     @Override
     public void dropUsersTable() {
-        sqlCommand(DELETE_TABLE_SQL);
+        executeSQLQuery(DELETE_TABLE_SQL);
     }
 
     @Override
@@ -131,7 +131,7 @@ public class UserDaoHibernateImpl implements UserDao {
         return user;
     }
 
-    private void sqlCommand (String sql) {
+    private void executeSQLQuery(String sql) {
         Transaction tx = null;
 
         try (Session session = sessionFactory.openSession()) {
