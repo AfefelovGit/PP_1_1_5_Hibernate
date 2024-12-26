@@ -5,7 +5,6 @@ import jm.task.core.jdbc.util.Util;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.TypeMismatchException;
 import org.hibernate.query.Query;
 
 import java.util.List;
@@ -30,39 +29,12 @@ public class UserDaoHibernateImpl implements UserDao {
 
     @Override
     public void createUsersTable() {
-        Transaction tx = null;
-
-        try (Session session = sessionFactory.openSession()) {
-            tx = session.beginTransaction();
-            Query<User> query = session.createSQLQuery(CREAT_TABLE_SQL);
-            query.executeUpdate();
-            tx.commit();
-        } catch (Exception e) {
-            if (tx != null && tx.isActive()) {
-                tx.rollback();
-            }
-            System.out.printf("Ошибка: %s\n", e.getMessage());
-            throw e;
-        }
+        sqlCommand(CREAT_TABLE_SQL);
     }
 
     @Override
     public void dropUsersTable() {
-        Transaction tx = null;
-
-        try (Session session = sessionFactory.openSession()) {
-            tx = session.beginTransaction();
-            Query<User> query = session.createSQLQuery(DELETE_TABLE_SQL);
-            query.executeUpdate();
-            tx.commit();
-        } catch (Exception e) {
-            if (tx != null && tx.isActive()) {
-                tx.rollback();
-            }
-            System.out.printf("Ошибка: %s\n", e.getMessage());
-            throw e;
-        }
-
+        sqlCommand(DELETE_TABLE_SQL);
     }
 
     @Override
@@ -157,5 +129,22 @@ public class UserDaoHibernateImpl implements UserDao {
             throw e;
         }
         return user;
+    }
+
+    private void sqlCommand (String sql) {
+        Transaction tx = null;
+
+        try (Session session = sessionFactory.openSession()) {
+            tx = session.beginTransaction();
+            Query<?> query = session.createNativeQuery(sql);
+            query.executeUpdate();
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null && tx.isActive()) {
+                tx.rollback();
+            }
+            System.out.printf("Ошибка: %s\n", e.getMessage());
+            throw e;
+        }
     }
 }
